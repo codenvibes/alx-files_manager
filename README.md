@@ -348,7 +348,7 @@ File: [server.js](), [routes/index.js](), [controllers/AppController.js]()
 ### 3. Create a new user
 `mandatory`
 
-File: []()
+File: [utils/](), [routes/index.js](), [controllers/UsersController.js]()
 </summary>
 
 
