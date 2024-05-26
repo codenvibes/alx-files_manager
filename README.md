@@ -92,7 +92,7 @@
 
 
 <details>
-<summary><b><a href=" ">Image thumbnail</a></b></summary><br>
+<summary><b><a href="https://www.npmjs.com/package/image-thumbnail">Image thumbnail</a></b></summary><br>
 
 
 <br><p align="center">※※※※※※※※※※※※</p><br>
