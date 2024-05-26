@@ -812,6 +812,62 @@ bob@dylan:~$
 File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 </summary>
 
+<p>In the file <code>routes/index.js</code>,  add 2 new endpoints:</p>
+
+<ul>
+<li><code>PUT /files/:id/publish</code> =&gt; <code>FilesController.putPublish</code></li>
+<li><code>PUT /files/:id/publish</code> =&gt; <code>FilesController.putUnpublish</code></li>
+</ul>
+
+<p>In the file <code>controllers/FilesController.js</code>, add the 2 new endpoints:</p>
+
+<p><code>PUT /files/:id/publish</code> should set <code>isPublic</code> to <code>true</code> on the file document based on the ID:</p>
+
+<ul>
+<li>Retrieve the user based on the token:
+
+<ul>
+<li>If not found, return an error <code>Unauthorized</code> with a status code 401</li>
+</ul></li>
+<li>If no file document is linked to the user and the ID passed as parameter, return an error <code>Not found</code> with a status code 404</li>
+<li>Otherwise:
+
+<ul>
+<li>Update the value of <code>isPublic</code> to <code>true</code> </li>
+<li>And return the file document with a status code 200</li>
+</ul></li>
+</ul>
+
+<p><code>PUT /files/:id/unpublish</code> should set <code>isPublic</code> to <code>false</code> on the file document based on the ID:</p>
+
+<ul>
+<li>Retrieve the user based on the token:
+
+<ul>
+<li>If not found, return an error <code>Unauthorized</code> with a status code 401</li>
+</ul></li>
+<li>If no file document is linked to the user and the ID passed as parameter, return an error <code>Not found</code> with a status code 404</li>
+<li>Otherwise:
+
+<ul>
+<li>Update the value of <code>isPublic</code> to <code>false</code> </li>
+<li>And return the file document with a status code 200</li>
+</ul></li>
+</ul>
+
+<pre><code>bob@dylan:~$ curl 0.0.0.0:5000/connect -H "Authorization: Basic Ym9iQGR5bGFuLmNvbTp0b3RvMTIzNCE=" ; echo ""
+{"token":"f21fb953-16f9-46ed-8d9c-84c6450ec80f"}
+bob@dylan:~$ 
+bob@dylan:~$ curl -XGET 0.0.0.0:5000/files/5f1e8896c7ba06511e683b25 -H "X-Token: f21fb953-16f9-46ed-8d9c-84c6450ec80f" ; echo ""
+{"id":"5f1e8896c7ba06511e683b25","userId":"5f1e7cda04a394508232559d","name":"image.png","type":"image","isPublic":false,"parentId":"5f1e881cc7ba06511e683b23"}
+bob@dylan:~$
+bob@dylan:~$ curl -XPUT 0.0.0.0:5000/files/5f1e8896c7ba06511e683b25/publish -H "X-Token: f21fb953-16f9-46ed-8d9c-84c6450ec80f" ; echo ""
+{"id":"5f1e8896c7ba06511e683b25","userId":"5f1e7cda04a394508232559d","name":"image.png","type":"image","isPublic":true,"parentId":"5f1e881cc7ba06511e683b23"}
+bob@dylan:~$ 
+bob@dylan:~$ curl -XPUT 0.0.0.0:5000/files/5f1e8896c7ba06511e683b25/unpublish -H "X-Token: f21fb953-16f9-46ed-8d9c-84c6450ec80f" ; echo ""
+{"id":"5f1e8896c7ba06511e683b25","userId":"5f1e7cda04a394508232559d","name":"image.png","type":"image","isPublic":false,"parentId":"5f1e881cc7ba06511e683b23"}
+bob@dylan:~$ 
+</code></pre>
 
 </details>
 
