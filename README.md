@@ -405,7 +405,7 @@ File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 <details>
 <summary>
 
-### 8. 
+### 8. File data
 `mandatory`
 
 File: []()
