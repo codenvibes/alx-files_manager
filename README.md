@@ -366,6 +366,64 @@ bob@dylan:~$
 File: [utils/db.js]()
 </summary>
 
+<p>Inside the folder <code>utils</code>, create a file <code>db.js</code> that contains the class <code>DBClient</code>.</p>
+
+<p><code>DBClient</code> should have:</p>
+
+<ul>
+<li>the constructor that creates a client to MongoDB:
+
+<ul>
+<li>host: from the environment variable <code>DB_HOST</code> or default: <code>localhost</code></li>
+<li>port: from the environment variable <code>DB_PORT</code> or default: <code>27017</code></li>
+<li>database: from the environment variable <code>DB_DATABASE</code> or default: <code>files_manager</code></li>
+</ul></li>
+<li>a function <code>isAlive</code> that returns <code>true</code> when the connection to MongoDB is a success otherwise, <code>false</code></li>
+<li>an asynchronous function <code>nbUsers</code> that returns the number of documents in the collection <code>users</code></li>
+<li>an asynchronous function <code>nbFiles</code> that returns the number of documents in the collection <code>files</code></li>
+</ul>
+
+<p>After the class definition, create and export an instance of <code>DBClient</code> called <code>dbClient</code>.</p>
+
+<pre><code>bob@dylan:~$ cat main.js
+import dbClient from './utils/db';
+
+const waitConnection = () =&gt; {
+    return new Promise((resolve, reject) =&gt; {
+        let i = 0;
+        const repeatFct = async () =&gt; {
+            await setTimeout(() =&gt; {
+                i += 1;
+                if (i &gt;= 10) {
+                    reject()
+                }
+                else if(!dbClient.isAlive()) {
+                    repeatFct()
+                }
+                else {
+                    resolve()
+                }
+            }, 1000);
+        };
+        repeatFct();
+    })
+};
+
+(async () =&gt; {
+    console.log(dbClient.isAlive());
+    await waitConnection();
+    console.log(dbClient.isAlive());
+    console.log(await dbClient.nbUsers());
+    console.log(await dbClient.nbFiles());
+})();
+
+bob@dylan:~$ npm run dev main.js
+false
+true
+4
+30
+bob@dylan:~$ 
+</code></pre>
 
 </details>
 
