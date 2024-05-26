@@ -357,7 +357,7 @@ File: [utils/](), [routes/index.js](), [controllers/UsersController.js]()
 <details>
 <summary>
 
-### 4. 
+### 4. Authenticate a user
 `mandatory`
 
 File: []()
