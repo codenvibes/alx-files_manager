@@ -11,6 +11,7 @@
 <h3><a href=>Notes</a></h3>
 <hr> -->
 
+<br>
 
 <p>This project is a summary of this back-end trimester: authentication, NodeJS, MongoDB, Redis, pagination and background processing.</p>
 
