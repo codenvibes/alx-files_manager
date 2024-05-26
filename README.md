@@ -1002,6 +1002,26 @@ bob@dylan:~$
 File: [tests/]()
 </summary>
 
+<p>Of course, a strong and stable project can not be good without tests.</p>
+
+<p>Create tests for <code>redisClient</code> and <code>dbClient</code>.</p>
+
+<p>Create tests for each endpoints:</p>
+
+<ul>
+<li><code>GET /status</code></li>
+<li><code>GET /stats</code></li>
+<li><code>POST /users</code></li>
+<li><code>GET /connect</code></li>
+<li><code>GET /disconnect</code></li>
+<li><code>GET /users/me</code></li>
+<li><code>POST /files</code></li>
+<li><code>GET /files/:id</code></li>
+<li><code>GET /files</code> (don’t forget the pagination)</li>
+<li><code>PUT /files/:id/publish</code></li>
+<li><code>PUT /files/:id/unpublish</code> </li>
+<li><code>GET /files/:id/data</code></li>
+</ul>
 
 </details>
 
