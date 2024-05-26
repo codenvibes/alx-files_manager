@@ -396,7 +396,7 @@ File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 ### 7. File publish/unpublish
 `mandatory`
 
-File: []()
+File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 </summary>
 
 
