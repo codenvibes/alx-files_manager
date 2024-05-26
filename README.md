@@ -333,7 +333,7 @@ File: [utils/db.js]()
 <details>
 <summary>
 
-### 2. 
+### 2. First API
 `mandatory`
 
 File: []()
