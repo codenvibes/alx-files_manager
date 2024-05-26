@@ -36,7 +36,7 @@
 
 ## Resources
 <details>
-<summary><b><a href=" ">Node JS getting started</a></b></summary><br>
+<summary><b><a href="https://nodejs.org/en/learn/getting-started/introduction-to-nodejs">Node JS getting started</a></b></summary><br>
 
 
 <br><p align="center">※※※※※※※※※※※※</p><br>
