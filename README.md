@@ -1,5 +1,5 @@
 <h1 align="center"><b>0x04. FILES MANAGER</b></h1>
-<div align="center"><code>Back-end</code> <code>JavaScript</code> <code>ES6</code> <code>NoSQL</code> <code>MongoDB</code> <code>Redis</code> <code>NodeJS</code> <code>ExpressJS</code> <code></code></div>
+<div align="center"><code>Back-end</code> <code>JavaScript</code> <code>ES6</code> <code>NoSQL</code> <code>MongoDB</code> <code>Redis</code> <code>NodeJS</code> <code>ExpressJS</code> <code>Kue</code></div>
 
 <!-- <br>
 
