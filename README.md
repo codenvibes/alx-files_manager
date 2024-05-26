@@ -436,6 +436,48 @@ bob@dylan:~$
 File: [server.js](), [routes/index.js](), [controllers/AppController.js]()
 </summary>
 
+<p>Inside <code>server.js</code>, create the Express server:</p>
+
+<ul>
+<li>it should listen on the port set by the environment variable <code>PORT</code> or by default 5000</li>
+<li>it should load all routes from the file <code>routes/index.js</code></li>
+</ul>
+
+<p>Inside the folder <code>routes</code>, create a file <code>index.js</code> that contains all endpoints of our API:</p>
+
+<ul>
+<li><code>GET /status</code> =&gt; <code>AppController.getStatus</code></li>
+<li><code>GET /stats</code> =&gt; <code>AppController.getStats</code></li>
+</ul>
+
+<p>Inside the folder <code>controllers</code>, create a file <code>AppController.js</code> that contains the definition of the 2 endpoints:</p>
+
+<ul>
+<li><code>GET /status</code> should return if Redis is alive and if the DB is alive too by using the 2 utils created previously: <code>{ "redis": true, "db": true }</code> with a status code 200</li>
+<li><code>GET /stats</code> should return the number of users and files in DB: <code>{ "users": 12, "files": 1231 }</code> with a status code 200
+
+<ul>
+<li><code>users</code> collection must be used for counting all users</li>
+<li><code>files</code> collection must be used for counting all files</li>
+</ul></li>
+</ul>
+
+<p><strong>Terminal 1:</strong></p>
+
+<pre><code>bob@dylan:~$ npm run start-server
+Server running on port 5000
+...
+</code></pre>
+
+<p><strong>Terminal 2:</strong></p>
+
+<pre><code>bob@dylan:~$ curl 0.0.0.0:5000/status ; echo ""
+{"redis":true,"db":true}
+bob@dylan:~$ 
+bob@dylan:~$ curl 0.0.0.0:5000/stats ; echo ""
+{"users":4,"files":30}
+bob@dylan:~$ 
+</code></pre>
 
 </details>
 
