@@ -312,7 +312,7 @@ module.exports = {
 ### 0. Redis utils
 `mandatory`
 
-File: []()
+File: [utils/redis.js]()
 </summary>
 
 
