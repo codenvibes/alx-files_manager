@@ -620,6 +620,113 @@ bob@dylan:~$
 File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 </summary>
 
+<p>In the file <code>routes/index.js</code>,  add a new endpoint:</p>
+
+<ul>
+<li><code>POST /files</code> =&gt; <code>FilesController.postUpload</code></li>
+</ul>
+
+<p>Inside <code>controllers</code>, add a file <code>FilesController.js</code> that contains the new endpoint:</p>
+
+<p><code>POST /files</code> should create a new file in DB and in disk:</p>
+
+<ul>
+<li>Retrieve the user based on the token:
+
+<ul>
+<li>If not found, return an error <code>Unauthorized</code> with a status code 401</li>
+</ul></li>
+<li>To create a file, you must specify:
+
+<ul>
+<li><code>name</code>: as filename</li>
+<li><code>type</code>: either <code>folder</code>, <code>file</code> or <code>image</code></li>
+<li><code>parentId</code>: (optional) as ID of the parent (default: 0 -&gt; the root)</li>
+<li><code>isPublic</code>: (optional) as boolean to define if the file is public or not (default: false)</li>
+<li><code>data</code>: (only for <code>type=file|image</code>) as Base64 of the file content</li>
+</ul></li>
+<li>If the <code>name</code> is missing, return an error <code>Missing name</code> with a status code 400</li>
+<li>If the <code>type</code> is missing or not part of the list of accepted type, return an error <code>Missing type</code> with a status code 400</li>
+<li>If the <code>data</code> is missing and <code>type != folder</code>, return an error <code>Missing data</code> with a status code 400</li>
+<li>If the <code>parentId</code> is set:
+
+<ul>
+<li>If no file is present in DB for this <code>parentId</code>, return an error <code>Parent not found</code> with a status code 400</li>
+<li>If the file present in DB for this <code>parentId</code> is not of type <code>folder</code>, return an error <code>Parent is not a folder</code> with a status code 400</li>
+</ul></li>
+<li>The user ID should be added to the document saved in DB - as owner of a file</li>
+<li>If the type is <code>folder</code>, add the new file document in the DB and return the new file with a status code 201</li>
+<li>Otherwise:
+
+<ul>
+<li>All file will be stored locally in a folder (to create automatically if not present):
+
+<ul>
+<li>The relative path of this folder is given by the environment variable <code>FOLDER_PATH</code> </li>
+<li>If this variable is not present or empty, use <code>/tmp/files_manager</code> as storing folder path</li>
+</ul></li>
+<li>Create a local path in the storing folder with filename a UUID </li>
+<li>Store the file in clear (reminder: <code>data</code> contains the Base64 of the file) in this local path</li>
+<li>Add the new file document in the collection <code>files</code> with these attributes:
+
+<ul>
+<li><code>userId</code>: ID of the owner document (owner from the authentication)</li>
+<li><code>name</code>: same as the value received</li>
+<li><code>type</code>: same as the value received</li>
+<li><code>isPublic</code>: same as the value received</li>
+<li><code>parentId</code>: same as the value received - if not present: 0</li>
+<li><code>localPath</code>: for a <code>type=file|image</code>, the absolute path to the file save in local</li>
+</ul></li>
+<li>Return the new file with a status code 201</li>
+</ul></li>
+</ul>
+
+<pre><code>bob@dylan:~$ curl 0.0.0.0:5000/connect -H "Authorization: Basic Ym9iQGR5bGFuLmNvbTp0b3RvMTIzNCE=" ; echo ""
+{"token":"f21fb953-16f9-46ed-8d9c-84c6450ec80f"}
+bob@dylan:~$ 
+bob@dylan:~$ curl -XPOST 0.0.0.0:5000/files -H "X-Token: f21fb953-16f9-46ed-8d9c-84c6450ec80f" -H "Content-Type: application/json" -d '{ "name": "myText.txt", "type": "file", "data": "SGVsbG8gV2Vic3RhY2shCg==" }' ; echo ""
+{"id":"5f1e879ec7ba06511e683b22","userId":"5f1e7cda04a394508232559d","name":"myText.txt","type":"file","isPublic":false,"parentId":0}
+bob@dylan:~$
+bob@dylan:~$ ls /tmp/files_manager/
+2a1f4fc3-687b-491a-a3d2-5808a02942c9
+bob@dylan:~$
+bob@dylan:~$ cat /tmp/files_manager/2a1f4fc3-687b-491a-a3d2-5808a02942c9 
+Hello Webstack!
+bob@dylan:~$
+bob@dylan:~$ curl -XPOST 0.0.0.0:5000/files -H "X-Token: f21fb953-16f9-46ed-8d9c-84c6450ec80f" -H "Content-Type: application/json" -d '{ "name": "images", "type": "folder" }' ; echo ""
+{"id":"5f1e881cc7ba06511e683b23","userId":"5f1e7cda04a394508232559d","name":"images","type":"folder","isPublic":false,"parentId":0}
+bob@dylan:~$
+bob@dylan:~$ cat image_upload.py
+import base64
+import requests
+import sys
+
+file_path = sys.argv[1]
+file_name = file_path.split('/')[-1]
+
+file_encoded = None
+with open(file_path, "rb") as image_file:
+    file_encoded = base64.b64encode(image_file.read()).decode('utf-8')
+
+r_json = { 'name': file_name, 'type': 'image', 'isPublic': True, 'data': file_encoded, 'parentId': sys.argv[3] }
+r_headers = { 'X-Token': sys.argv[2] }
+
+r = requests.post("http://0.0.0.0:5000/files", json=r_json, headers=r_headers)
+print(r.json())
+
+bob@dylan:~$
+bob@dylan:~$ python image_upload.py image.png f21fb953-16f9-46ed-8d9c-84c6450ec80f 5f1e881cc7ba06511e683b23
+{'id': '5f1e8896c7ba06511e683b25', 'userId': '5f1e7cda04a394508232559d', 'name': 'image.png', 'type': 'image', 'isPublic': True, 'parentId': '5f1e881cc7ba06511e683b23'}
+bob@dylan:~$
+bob@dylan:~$ echo 'db.files.find()' | mongo files_manager
+{ "_id" : ObjectId("5f1e881cc7ba06511e683b23"), "userId" : ObjectId("5f1e7cda04a394508232559d"), "name" : "images", "type" : "folder", "parentId" : "0" }
+{ "_id" : ObjectId("5f1e879ec7ba06511e683b22"), "userId" : ObjectId("5f1e7cda04a394508232559d"), "name" : "myText.txt", "type" : "file", "parentId" : "0", "isPublic" : false, "localPath" : "/tmp/files_manager/2a1f4fc3-687b-491a-a3d2-5808a02942c9" }
+{ "_id" : ObjectId("5f1e8896c7ba06511e683b25"), "userId" : ObjectId("5f1e7cda04a394508232559d"), "name" : "image.png", "type" : "image", "parentId" : ObjectId("5f1e881cc7ba06511e683b23"), "isPublic" : true, "localPath" : "/tmp/files_manager/51997b88-5c42-42c2-901e-e7f4e71bdc47" }
+bob@dylan:~$
+bob@dylan:~$ ls /tmp/files_manager/
+2a1f4fc3-687b-491a-a3d2-5808a02942c9   51997b88-5c42-42c2-901e-e7f4e71bdc47
+bob@dylan:~$
+</code></pre>
 
 </details>
 
