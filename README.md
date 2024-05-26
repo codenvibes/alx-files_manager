@@ -543,6 +543,71 @@ bob@dylan:~$
 File: [utils/](), [routes/index.js](), [controllers/UsersController.js](), [controllers/AuthController.js]()
 </summary>
 
+<p>In the file <code>routes/index.js</code>,  add 3 new endpoints:</p>
+
+<ul>
+<li><code>GET /connect</code> =&gt; <code>AuthController.getConnect</code></li>
+<li><code>GET /disconnect</code> =&gt; <code>AuthController.getDisconnect</code></li>
+<li><code>GET /users/me</code> =&gt; <code>UserController.getMe</code></li>
+</ul>
+
+<p>Inside <code>controllers</code>, add a file <code>AuthController.js</code> that contains new endpoints:</p>
+
+<p><code>GET /connect</code> should sign-in the user by generating a new authentication token:</p>
+
+<ul>
+<li>By using the header <code>Authorization</code> and the technique of the Basic auth (Base64 of the <code>&lt;email&gt;:&lt;password&gt;</code>), find the user associate to this email and with this password (reminder: we are storing the SHA1 of the password)</li>
+<li>If no user has been found, return an error <code>Unauthorized</code> with a status code 401</li>
+<li>Otherwise:
+
+<ul>
+<li>Generate a random string (using <code>uuidv4</code>) as token</li>
+<li>Create a key: <code>auth_&lt;token&gt;</code> </li>
+<li>Use this key for storing in Redis (by using the <code>redisClient</code> create previously) the user ID for 24 hours</li>
+<li>Return this token: <code>{ "token": "155342df-2399-41da-9e8c-458b6ac52a0c" }</code> with a status code 200</li>
+</ul></li>
+</ul>
+
+<p>Now, we have a way to identify a user, create a token (= avoid to store the password on any front-end) and use this token for 24h to access to the API!</p>
+
+<p>Every authenticated endpoints of our API will look at this token inside the header <code>X-Token</code>.</p>
+
+<p><code>GET /disconnect</code> should sign-out the user based on the token:</p>
+
+<ul>
+<li>Retrieve the user based on the token:
+
+<ul>
+<li>If not found, return an error <code>Unauthorized</code> with a status code 401</li>
+<li>Otherwise, delete the token in Redis and return nothing with a status code 204</li>
+</ul></li>
+</ul>
+
+<p>Inside the file <code>controllers/UsersController.js</code> add a new endpoint:</p>
+
+<p><code>GET /users/me</code> should retrieve the user base on the token used:</p>
+
+<ul>
+<li>Retrieve the user based on the token:
+
+<ul>
+<li>If not found, return an error <code>Unauthorized</code> with a status code 401</li>
+<li>Otherwise, return the user object (<code>email</code> and <code>id</code> only)</li>
+</ul></li>
+</ul>
+
+<pre><code>bob@dylan:~$ curl 0.0.0.0:5000/connect -H "Authorization: Basic Ym9iQGR5bGFuLmNvbTp0b3RvMTIzNCE=" ; echo ""
+{"token":"031bffac-3edc-4e51-aaae-1c121317da8a"}
+bob@dylan:~$ 
+bob@dylan:~$ curl 0.0.0.0:5000/users/me -H "X-Token: 031bffac-3edc-4e51-aaae-1c121317da8a" ; echo ""
+{"id":"5f1e7cda04a394508232559d","email":"bob@dylan.com"}
+bob@dylan:~$ 
+bob@dylan:~$ curl 0.0.0.0:5000/disconnect -H "X-Token: 031bffac-3edc-4e51-aaae-1c121317da8a" ; echo ""
+
+bob@dylan:~$ curl 0.0.0.0:5000/users/me -H "X-Token: 031bffac-3edc-4e51-aaae-1c121317da8a" ; echo ""
+{"error":"Unauthorized"}
+bob@dylan:~$ 
+</code></pre>
 
 </details>
 
