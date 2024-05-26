@@ -100,7 +100,7 @@
 
 
 <details>
-<summary><b><a href=" ">Mime-Types</a></b></summary><br>
+<summary><b><a href="https://www.npmjs.com/package/mime-types">Mime-Types</a></b></summary><br>
 
 
 <br><p align="center">※※※※※※※※※※※※</p><br>
