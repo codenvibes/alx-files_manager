@@ -420,7 +420,7 @@ File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 ### 9. Image Thumbnails
 `mandatory`
 
-File: []()
+File: [utils/](), [controllers/FilesController.js](), [worker.js]()
 </summary>
 
 
