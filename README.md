@@ -935,6 +935,61 @@ bob@dylan:~$
 File: [utils/](), [controllers/FilesController.js](), [worker.js]()
 </summary>
 
+<p>Update the endpoint <code>POST /files</code> endpoint to start a background processing for generating thumbnails for a file of type <code>image</code>:</p>
+
+<ul>
+<li>Create a <code>Bull</code> queue <code>fileQueue</code> </li>
+<li>When a new image is stored (in local and in DB), add a job to this queue with the <code>userId</code> and <code>fileId</code></li>
+</ul>
+
+<p>Create a file <code>worker.js</code>:</p>
+
+<ul>
+<li>By using the module <code>Bull</code>, create a queue <code>fileQueue</code></li>
+<li>Process this queue:
+
+<ul>
+<li>If <code>fileId</code> is not present in the job, raise an error <code>Missing fileId</code></li>
+<li>If <code>userId</code> is not present in the job, raise an error <code>Missing userId</code></li>
+<li>If no document is found in DB based on the <code>fileId</code> and <code>userId</code>, raise an error <code>File not found</code></li>
+<li>By using the module <code>image-thumbnail</code>, generate 3 thumbnails with <code>width</code> = 500, 250 and 100 - store each result on the same location of the original file by appending <code>_&lt;width size&gt;</code></li>
+</ul></li>
+</ul>
+
+<p>Update the endpoint <code>GET /files/:id/data</code> to accept a query parameter <code>size</code>:</p>
+
+<ul>
+<li><code>size</code> can be <code>500</code>, <code>250</code> or <code>100</code></li>
+<li>Based on <code>size</code>, return the correct local file</li>
+<li>If the local file doesn’t exist, return an error <code>Not found</code> with a status code 404</li>
+</ul>
+
+<p><strong>Terminal 3:</strong> (start the worker)</p>
+
+<pre><code>bob@dylan:~$ npm run start-worker
+...
+</code></pre>
+
+<p><strong>Terminal 2:</strong></p>
+
+<pre><code>bob@dylan:~$ curl 0.0.0.0:5000/connect -H "Authorization: Basic Ym9iQGR5bGFuLmNvbTp0b3RvMTIzNCE=" ; echo ""
+{"token":"f21fb953-16f9-46ed-8d9c-84c6450ec80f"}
+bob@dylan:~$ 
+bob@dylan:~$ python image_upload.py image.png f21fb953-16f9-46ed-8d9c-84c6450ec80f 5f1e881cc7ba06511e683b23
+{'id': '5f1e8896c7ba06511e683b25', 'userId': '5f1e7cda04a394508232559d', 'name': 'image.png', 'type': 'image', 'isPublic': True, 'parentId': '5f1e881cc7ba06511e683b23'}
+bob@dylan:~$ ls /tmp/files_manager/
+2a1f4fc3-687b-491a-a3d2-5808a02942c9   51997b88-5c42-42c2-901e-e7f4e71bdc47   6dc53397-8491-4b7c-8273-f748b1a031cb   6dc53397-8491-4b7c-8273-f748b1a031cb_100   6dc53397-8491-4b7c-8273-f748b1a031cb_250    6dc53397-8491-4b7c-8273-f748b1a031cb_500
+bob@dylan:~$ 
+bob@dylan:~$ curl -XGET 0.0.0.0:5000/files/5f1e8896c7ba06511e683b25/data -so new_image.png ; file new_image.png
+new_image.png: PNG image data, 471 x 512, 8-bit/color RGBA, non-interlaced
+bob@dylan:~$ 
+bob@dylan:~$ curl -XGET 0.0.0.0:5000/files/5f1e8896c7ba06511e683b25/data?size=100 -so new_image.png ; file new_image.png
+new_image.png: PNG image data, 100 x 109, 8-bit/color RGBA, non-interlaced
+bob@dylan:~$ 
+bob@dylan:~$ curl -XGET 0.0.0.0:5000/files/5f1e8896c7ba06511e683b25/data?size=250 -so new_image.png ; file new_image.png
+new_image.png: PNG image data, 250 x 272, 8-bit/color RGBA, non-interlaced
+bob@dylan:~$
+</code></pre>
 
 </details>
 
