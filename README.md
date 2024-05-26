@@ -124,7 +124,7 @@
 
 ## Learning Objectives
 <details>
-<summary><b><a href=" "> </a></b></summary><br>
+<summary><b><a href=" "> </a>how to create an API with Express</b></summary><br>
 
 
 <br><p align="center">※※※※※※※※※※※※</p><br>
