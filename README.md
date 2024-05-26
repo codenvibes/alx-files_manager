@@ -441,7 +441,7 @@ File: [tests/]()
 <details>
 <summary>
 
-### 11. 
+### 11. New user - welcome email
 `#advanced`
 
 File: []()
