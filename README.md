@@ -1034,6 +1034,28 @@ File: [tests/]()
 File: [utils/](), [worker.js](), [controllers/UsersController.js]()
 </summary>
 
+<p>Update the endpoint <code>POST /users</code> endpoint to start a background processing for sending a “Welcome email” to the user:</p>
+
+<ul>
+<li>Create a <code>Bull</code> queue <code>userQueue</code> </li>
+<li>When a new user is stored (in DB), add a job to this queue with the <code>userId</code></li>
+</ul>
+
+<p>Update the file <code>worker.js</code>:</p>
+
+<ul>
+<li>By using the module <code>Bull</code>, create a queue <code>userQueue</code></li>
+<li>Process this queue:
+
+<ul>
+<li>If <code>userId</code> is not present in the job, raise an error <code>Missing userId</code></li>
+<li>If no document is found in DB based on the <code>userId</code>, raise an error <code>User not found</code></li>
+<li>Print in the console <code>Welcome &lt;email&gt;!</code></li>
+</ul></li>
+</ul>
+
+<p>In real life, you can use a third party service like <a href="https://intranet.alxswe.com/rltoken/Lr8MoeTgC7KRx413wpoBXg" title="Mailgun" target="_blank">Mailgun</a> to send real email. 
+These API are slow, (sending via SMTP is worst!) and sending emails via a background job is important to optimize API endpoint.</p>
 
 </details>
 
