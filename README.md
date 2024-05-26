@@ -315,6 +315,45 @@ module.exports = {
 File: [utils/redis.js]()
 </summary>
 
+<p>Inside the folder <code>utils</code>, create a file <code>redis.js</code> that contains the class <code>RedisClient</code>.</p>
+
+<p><code>RedisClient</code> should have:</p>
+
+<ul>
+<li>the constructor that creates a client to Redis:
+
+<ul>
+<li>any error of the redis client must be displayed in the console (you should use <code>on('error')</code> of the redis client)</li>
+</ul></li>
+<li>a function <code>isAlive</code> that returns <code>true</code> when the connection to Redis is a success otherwise, <code>false</code></li>
+<li>an asynchronous function <code>get</code> that takes a string key as argument and returns the Redis value stored for this key</li>
+<li>an asynchronous function <code>set</code> that takes a string key, a value and a duration in second as arguments to store it in Redis (with an expiration set by the duration argument)</li>
+<li>an asynchronous function <code>del</code> that takes a string key as argument and remove the value in Redis for this key</li>
+</ul>
+
+<p>After the class definition, create and export an instance of <code>RedisClient</code> called <code>redisClient</code>.</p>
+
+<pre><code>bob@dylan:~$ cat main.js
+import redisClient from './utils/redis';
+
+(async () =&gt; {
+    console.log(redisClient.isAlive());
+    console.log(await redisClient.get('myKey'));
+    await redisClient.set('myKey', 12, 5);
+    console.log(await redisClient.get('myKey'));
+
+    setTimeout(async () =&gt; {
+        console.log(await redisClient.get('myKey'));
+    }, 1000*10)
+})();
+
+bob@dylan:~$ npm run dev main.js
+true
+null
+12
+null
+bob@dylan:~$ 
+</code></pre>
 
 </details>
 
