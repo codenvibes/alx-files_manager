@@ -417,7 +417,7 @@ File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 <details>
 <summary>
 
-### 9. 
+### 9. Image Thumbnails
 `mandatory`
 
 File: []()
