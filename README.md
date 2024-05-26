@@ -173,6 +173,7 @@
 - Your code should use the `js` extension
 - Your code will be verified against lint using ESLint
 
+<br>
 
 <h2>Provided files</h2>
 
