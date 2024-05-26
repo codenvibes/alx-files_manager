@@ -360,7 +360,7 @@ File: [utils/](), [routes/index.js](), [controllers/UsersController.js]()
 ### 4. Authenticate a user
 `mandatory`
 
-File: []()
+File: [utils/](), [routes/index.js](), [controllers/UsersController.js](), [controllers/AuthController.js]()
 </summary>
 
 
