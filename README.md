@@ -384,7 +384,7 @@ File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 ### 6. Get and list file
 `mandatory`
 
-File: []()
+File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 </summary>
 
 
