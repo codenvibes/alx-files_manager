@@ -739,6 +739,67 @@ bob@dylan:~$
 File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 </summary>
 
+<p>In the file <code>routes/index.js</code>,  add 2 new endpoints:</p>
+
+<ul>
+<li><code>GET /files/:id</code> =&gt; <code>FilesController.getShow</code></li>
+<li><code>GET /files</code> =&gt; <code>FilesController.getIndex</code></li>
+</ul>
+
+<p>In the file <code>controllers/FilesController.js</code>, add the 2 new endpoints:</p>
+
+<p><code>GET /files/:id</code> should retrieve the file document based on the ID:</p>
+
+<ul>
+<li>Retrieve the user based on the token:
+
+<ul>
+<li>If not found, return an error <code>Unauthorized</code> with a status code 401</li>
+</ul></li>
+<li>If no file document is linked to the user and the ID passed as parameter, return an error <code>Not found</code> with a status code 404</li>
+<li>Otherwise, return the file document</li>
+</ul>
+
+<p><code>GET /files</code> should retrieve all users file documents for a specific <code>parentId</code> and with pagination:</p>
+
+<ul>
+<li>Retrieve the user based on the token:
+
+<ul>
+<li>If not found, return an error <code>Unauthorized</code> with a status code 401</li>
+</ul></li>
+<li>Based on the query parameters <code>parentId</code> and <code>page</code>, return the list of file document
+
+<ul>
+<li><code>parentId</code>:
+
+<ul>
+<li>No validation of <code>parentId</code> needed - if the <code>parentId</code> is not linked to any user folder, returns an empty list</li>
+<li>By default, <code>parentId</code> is equal to 0 = the root</li>
+</ul></li>
+<li>Pagination:
+
+<ul>
+<li>Each page should be 20 items max</li>
+<li><code>page</code> query parameter starts at 0 for the first page. If equals to 1, it means it’s the second page (form the 20th to the 40th), etc…</li>
+<li>Pagination can be done directly by the <code>aggregate</code> of MongoDB</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<pre><code>bob@dylan:~$ curl 0.0.0.0:5000/connect -H "Authorization: Basic Ym9iQGR5bGFuLmNvbTp0b3RvMTIzNCE=" ; echo ""
+{"token":"f21fb953-16f9-46ed-8d9c-84c6450ec80f"}
+bob@dylan:~$ 
+bob@dylan:~$ curl -XGET 0.0.0.0:5000/files -H "X-Token: f21fb953-16f9-46ed-8d9c-84c6450ec80f" ; echo ""
+[{"id":"5f1e879ec7ba06511e683b22","userId":"5f1e7cda04a394508232559d","name":"myText.txt","type":"file","isPublic":false,"parentId":0},{"id":"5f1e881cc7ba06511e683b23","userId":"5f1e7cda04a394508232559d","name":"images","type":"folder","isPublic":false,"parentId":0},{"id":"5f1e8896c7ba06511e683b25","userId":"5f1e7cda04a394508232559d","name":"image.png","type":"image","isPublic":true,"parentId":"5f1e881cc7ba06511e683b23"}]
+bob@dylan:~$
+bob@dylan:~$ curl -XGET 0.0.0.0:5000/files?parentId=5f1e881cc7ba06511e683b23 -H "X-Token: f21fb953-16f9-46ed-8d9c-84c6450ec80f" ; echo ""
+[{"id":"5f1e8896c7ba06511e683b25","userId":"5f1e7cda04a394508232559d","name":"image.png","type":"image","isPublic":true,"parentId":"5f1e881cc7ba06511e683b23"}]
+bob@dylan:~$
+bob@dylan:~$ curl -XGET 0.0.0.0:5000/files/5f1e8896c7ba06511e683b25 -H "X-Token: f21fb953-16f9-46ed-8d9c-84c6450ec80f" ; echo ""
+{"id":"5f1e8896c7ba06511e683b25","userId":"5f1e7cda04a394508232559d","name":"image.png","type":"image","isPublic":true,"parentId":"5f1e881cc7ba06511e683b23"}
+bob@dylan:~$
+</code></pre>
 
 </details>
 
