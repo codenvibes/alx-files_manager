@@ -444,7 +444,7 @@ File: [tests/]()
 ### 11. New user - welcome email
 `#advanced`
 
-File: []()
+File: [utils/](), [worker.js](), [controllers/UsersController.js]()
 </summary>
 
 
