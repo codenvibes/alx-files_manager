@@ -393,7 +393,7 @@ File: [utils/](), [routes/index.js](), [controllers/FilesController.js]()
 <details>
 <summary>
 
-### 7. 
+### 7. File publish/unpublish
 `mandatory`
 
 File: []()
