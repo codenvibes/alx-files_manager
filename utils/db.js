@@ -15,12 +15,12 @@ class DBClient {
     return this.client.isConnected();
   }
 
-  async nbUsers() {
-    return await this.client.db().collection('users').countDocuments();
+  nbUsers() {
+    return this.client.db().collection('users').countDocuments();
   }
 
-  async nbFiles() {
-    return await this.client.db().collection('files').countDocuments();
+  nbFiles() {
+    return this.client.db().collection('files').countDocuments();
   }
 }
 
