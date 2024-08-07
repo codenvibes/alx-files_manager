@@ -1,33 +1,19 @@
-import { Router } from 'express';
 import AppController from '../controllers/AppController';
 import UsersController from '../controllers/UsersController';
 import AuthController from '../controllers/AuthController';
 import FilesController from '../controllers/FilesController';
 
-const router = Router();
+const SetRoutes = (app) => {
+  app.get('/status', AppController.getStatus);
+  app.get('/stats', AppController.getStats);
 
-router.get('/status', AppController.getStatus);
+  app.post('/users', UsersController.postNew);
+  app.get('/users/me', UsersController.getMe);
 
-router.get('/stats', AppController.getStats);
+  app.get('/connect', AuthController.getConnect);
+  app.get('/disconnect', AuthController.getDisconnect);
 
-router.post('/users', UsersController.postNew);
+  app.post('/files', FilesController.postUpload);
+};
 
-router.get('/connect', AuthController.getConnect);
-
-router.get('/disconnect', AuthController.getDisconnect);
-
-router.get('/users/me', UsersController.getMe);
-
-router.post('/files', FilesController.postUpload);
-
-router.get('/files/:id', FilesController.getShow);
-
-router.get('/files', FilesController.getIndex);
-
-router.put('/files/:id/publish', FilesController.putPublish);
-
-router.put('/files/:id/unpublish', FilesController.putUnpublish);
-
-router.get('/files/:id/data', FilesController.getFile);
-
-module.exports = router;
+export default SetRoutes;

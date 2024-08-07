@@ -1,63 +1,38 @@
-// utils/redis.js
-import redis from 'redis';
+import { promisify } from 'util';
+import { createClient } from 'redis';
 
 class RedisClient {
-    constructor() {
-        this.client = redis.createClient();
-        this.client.on('error', (err) => {
-            console.error('Redis error:', err);
-        });
-    }
+  constructor() {
+    this.client = createClient();
+    this.isClientConnected = true;
 
-    isAlive() {
-        // In Redis, there's no direct way to check if the connection is alive.
-        // A common approach is to check if `ping` command succeeds.
-        return new Promise((resolve) => {
-            this.client.ping((err) => {
-                if (err) {
-                    console.error('Ping error:', err);
-                    resolve(false);
-                } else {
-                    resolve(true);
-                }
-            });
-        });
-    }
+    this.client.on('error', (err) => {
+      console.error('Redis client failed to connect:', err.message || err.toString());
+      this.isClientConnected = false;
+    });
 
-    async get(key) {
-        return new Promise((resolve, reject) => {
-            this.client.get(key, (err, value) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(value);
-            });
-        });
-    }
+    this.client.on('connect', () => {
+      this.isClientConnected = true;
+    });
+  }
 
-    async set(key, value, duration) {
-        return new Promise((resolve, reject) => {
-            this.client.setex(key, duration, value, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve();
-            });
-        });
-    }
+  isAlive() {
+    return this.isClientConnected;
+  }
 
-    async del(key) {
-        return new Promise((resolve, reject) => {
-            this.client.del(key, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve();
-            });
-        });
-    }
+  async get(key) {
+    return promisify(this.client.GET).bind(this.client)(key);
+  }
+
+  async set(key, value, duration) {
+    await promisify(this.client.SETEX)
+      .bind(this.client)(key, duration, value);
+  }
+
+  async del(key) {
+    await promisify(this.client.DEL).bind(this.client)(key);
+  }
 }
 
-// Create and export an instance of RedisClient
 const redisClient = new RedisClient();
 export default redisClient;
