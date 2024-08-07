@@ -1058,3 +1058,4 @@ File: [utils/](), [worker.js](), [controllers/UsersController.js]()
 These API are slow, (sending via SMTP is worst!) and sending emails via a background job is important to optimize API endpoint.</p>
 
 </details>
+
